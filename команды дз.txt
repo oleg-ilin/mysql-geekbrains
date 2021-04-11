@@ -1,0 +1,117 @@
+SHOW TABLES;
+SELECT * FROM users LIMIT 10;
+UPDATE users SET updated_at = NOW() WHERE updated_at < created_at; 
+SELECT * FROM profiles LIMIT 10;
+
+CREATE TEMPORARY TABLE genders (name CHAR(1));
+INSERT INTO genders VALUES ('F'), ('M');
+
+SELECT  * FROM genders;
+SELECT name FROM genders ORDER BY RAND() LIMIT 1; 
+UPDATE profiles SET gender = (SELECT name FROM genders ORDER BY RAND() LIMIT 1); 
+
+CREATE TEMPORARY TABLE countries (name VARCHAR(100));
+INSERT INTO countries VALUES
+('Russia'),
+('Germany'),
+('Belarus'),
+('USA');
+
+-- SELECT  * FROM countries;
+-- UPDATE profiles SET country = (SELECT name FROM countries ORDER BY RAND() LIMIT 1);
+
+SELECT * FROM messages LIMIT 10;
+SELECT * FROM messages;
+
+SELECT FLOOR(1 + RAND() * 100); 
+UPDATE messages SET
+	from_user_id  = FLOOR(1 + RAND() * 100),
+	to_user_id = FLOOR(1 + RAND() * 100);
+
+
+
+SELECT * FROM media LIMIT 10;
+UPDATE media SET user_id  = FLOOR(1 + RAND() * 100);
+
+-- http://dropbox.com/vk/
+
+CREATE TEMPORARY TABLE extensions (name VARCHAR(10));
+INSERT INTO extensions VALUES
+('mpeg'),
+('jpeg'),
+('avi'),
+('mp3');
+
+SELECT  * FROM extensions;
+UPDATE media SET filename = CONCAT( 
+	'http://dropbox.com/vk/',
+	filename,
+	'.',
+	(SELECT name FROM extensions ORDER BY RAND() LIMIT 1));
+
+-- Если надо добавить добавить столбец test:
+-- ALTER TABLE media ADD COLUMN test VARCHAR(20) AFTER size;
+
+UPDATE media SET size =  FLOOR(10000 + RAND() * 100000000) WHERE size < 36000;
+
+UPDATE media SET metadata = CONCAT('{"owner":"',
+	(SELECT CONCAT(first_name, ' ', last_name) FROM users WHERE id = user_id),
+	'"}'); 
+
+SELECT * FROM media_types;
+DELETE FROM media_types; -- удаляем все из media_types
+INSERT INTO media_types (name) VALUES
+	('photo'),
+	('audio'),
+	('video');
+TRUNCATE media_types; -- сбрасываем счетчик автоинкремент
+
+UPDATE media SET media_type_id =  FLOOR(1 + RAND() * 3);
+
+SELECT * FROM friendship LIMIT 10;
+UPDATE  friendship SET
+	user_id  = FLOOR(1 + RAND() * 100),
+	friend_id = FLOOR(1 + RAND() * 100);
+SELECT * FROM friendship_statuses;
+TRUNCATE friendship_statuses;
+INSERT INTO friendship_statuses (name) VALUES
+	('Requested'),
+	('Confirmed'),
+	('Rejected');
+	
+-- если хочется привести значение media_type_id к расширению файла:
+/*
+ UPDATE media SET filename = CONCAT( 
+	'http://dropbox.com/vk/',
+	filename,
+	'.mp3')
+	WHERE media_type_id = 2; */
+
+UPDATE friendship SET friendship_status_id =  FLOOR(1 + RAND() * 3);
+
+UPDATE friendship SET confirmed_at = NOW() WHERE confirmed_at < requested_at; 
+-- UPDATE friendship SET created_at = NOW() WHERE created_at < requested_at; 
+UPDATE friendship SET created_at = confirmed_at; 
+
+
+SELECT * FROM communities;
+-- DELETE FROM communities WHERE id > 30;
+
+SELECT * FROM communities_users;
+UPDATE  communities_users SET
+	user_id  = FLOOR(1 + RAND() * 100),
+	community_id = FLOOR(1 + RAND() * 10);
+
+DESC communities_users ;
+
+UPDATE communities_users SET created_at = (SELECT DATE_ADD('
+2018-08-18 00:00:00', INTERVAL 1 MONTH)) WHERE user_id = 26;
+
+
+
+
+
+
+
+
+
