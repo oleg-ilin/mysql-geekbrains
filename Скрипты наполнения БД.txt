@@ -1,0 +1,63 @@
+SELECT * FROM users ;
+SELECT * FROM users_profiles;
+SELECT * FROM actors;
+SELECT * FROM actors_profiles ;
+SELECT * FROM directors ;
+SELECT * FROM directors_profiles ;
+SELECT * FROM genres ;
+SELECT * FROM movies ;
+SELECT * FROM movies_actors ;
+SELECT * FROM movies_directors ;
+SELECT * FROM media ;
+SELECT * FROM media_types ;
+SELECT * FROM reviews ;
+SELECT * FROM ratings ;
+
+UPDATE users SET updated_at = NOW() WHERE updated_at < created_at;
+UPDATE users_profiles SET updated_at = NOW() WHERE updated_at < created_at;
+UPDATE users_profiles SET last_login = NOW() WHERE last_login < updated_at;
+UPDATE actors SET updated_at = NOW() WHERE updated_at < created_at;
+UPDATE actors_profiles SET updated_at = NOW() WHERE updated_at < created_at;
+UPDATE directors SET updated_at = NOW() WHERE updated_at < created_at;
+UPDATE directors_profiles SET updated_at = NOW() WHERE updated_at < created_at;
+UPDATE movies SET updated_at = NOW() WHERE updated_at < created_at;
+UPDATE media SET updated_at = NOW() WHERE updated_at < created_at;
+UPDATE media_types SET updated_at = NOW() WHERE updated_at < created_at;
+UPDATE reviews SET updated_at = NOW() WHERE updated_at < created_at;
+
+TRUNCATE genres ;
+-- Заполняем таблицу жанров
+INSERT INTO genres (name) VALUES 
+  ('comedy'),
+  ('detective'),
+  ('action'),
+  ('drama'),
+  ('adventure'),
+  ('history');
+
+UPDATE movies SET genres_id = FLOOR(1 + RAND() * 6);
+
+UPDATE media SET media_type_id = FLOOR(1 + RAND() * 2);
+UPDATE media SET filename = CONCAT( 
+	'http://kinopoisk.ru/photos/',
+	filename,
+	'.jpeg') WHERE media_type_id = 1;
+UPDATE media SET filename = CONCAT( 
+	'http://kinopoisk.ru/videos/',
+	filename,
+	'.mpeg') WHERE media_type_id = 2;
+
+UPDATE media_types SET name = 'photo' WHERE id = 1;
+UPDATE media_types SET name = 'video' WHERE id = 2;
+
+UPDATE reviews SET user_id = FLOOR(1 + RAND() * 100);
+UPDATE reviews SET movie_id = FLOOR(1 + RAND() * 100);
+
+-- (SELECT name FROM extensions ORDER BY RAND() LIMIT 1));
+ALTER TABLE movies CHANGE genres_id genre_id INT UNSIGNED;
+-- Смотрим структуру таблицы
+DESC users_profiles;
+DESC media;
+DESC movies;
+DESC media_types ;
+

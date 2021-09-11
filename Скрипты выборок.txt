@@ -1,0 +1,50 @@
+SELECT * FROM ratings ;
+SELECT * FROM movies;
+SELECT SUM(rating) FROM ratings WHERE movie_id = 35;
+SELECT *  FROM ratings WHERE movie_id = 35;
+
+-- Считаем сумму оценок каждого фильма
+SELECT movie_id, SUM(rating)  FROM ratings GROUP BY movie_id;
+-- Считаем количество оценок
+SELECT movie_id, COUNT(rating)  FROM ratings GROUP BY movie_id;
+-- Считаем среднюю оценку фильма
+SELECT movie_id, 
+       ROUND((SELECT SUM(rating) / COUNT(rating)), 1) AS average_rating
+       FROM ratings 
+         GROUP BY movie_id 
+         ORDER BY average_rating DESC ;
+
+
+
+-- Выводим список фильмов по рейтингу        
+SELECT 
+  movie_id, 
+  ROUND((SELECT SUM(rating) / COUNT(rating)), 1) AS average_rating, 
+  movie_name
+    FROM ratings 
+      JOIN
+        movies
+          ON ratings.movie_id = movies.id
+             GROUP BY movie_id 
+             ORDER BY average_rating DESC ;
+      
+      
+-- Десятка самых рейтинговых фильмов
+SELECT 
+movie_name,   
+  ROUND((SELECT SUM(rating) / COUNT(rating)), 1) AS average_rating
+    FROM ratings 
+      JOIN
+        movies
+          ON ratings.movie_id = movies.id
+             GROUP BY movie_id 
+             ORDER BY average_rating DESC
+             LIMIT 10;
+            
+SELECT * FROM movies_actors WHERE movie_id = 89;
+
+-- Считаем сколько актеров снялось в фильме
+SELECT movie_id, COUNT(actor_id) AS total_actors_in_movie
+  FROM movies_actors
+  GROUP BY movie_id
+  ORDER BY total_actors_in_movie DESC;
